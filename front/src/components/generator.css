@@ -1,0 +1,15 @@
+.generator .form {
+    display: flex;
+}
+
+.generator .col {
+    margin-right: 20px;
+}
+
+.generator #count {
+    width: 32px;
+}
+
+.generator .label {
+    margin-right: 15px;
+}
