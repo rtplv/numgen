@@ -1,7 +1,7 @@
 import random
 import math
 from enum import Enum
-from typing import Tuple
+from typing import Tuple, List
 
 from generator.utils.code import add_code_zero_prefix
 
@@ -29,6 +29,10 @@ def generate(inn_type: InnType) -> str:
         n1_check_digit = __calc_organization_check_digit(inn_str_part, IND_INN_N1_CF)
         n2_check_digit = __calc_organization_check_digit(inn_str_part + str(n1_check_digit), IND_INN_N2_CF)
         return inn_str_part + str(n1_check_digit) + str(n2_check_digit)
+
+
+def generate_batch(inn_type: InnType, quantity: int) -> List[str]:
+    return [generate(inn_type) for _ in range(0, quantity)]
 
 
 def validate(inn: str) -> bool:
@@ -60,3 +64,4 @@ def __calc_organization_check_digit(inn_str: str, table: Tuple[int, ...]) -> int
 def __randomize_code(length: int) -> str:
     r_number = random.randint(1, 10 ** length - 1)
     return add_code_zero_prefix(str(r_number), length)
+
