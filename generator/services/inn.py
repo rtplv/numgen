@@ -15,7 +15,6 @@ class InnType(Enum):
     ORGANIZATION = 'ORGANIZATION'
 
 
-# TODO: покрыть тестами
 def generate(inn_type: InnType) -> str:
     region_code = __randomize_code(2)
     ifns_code = __randomize_code(2)
@@ -32,9 +31,19 @@ def generate(inn_type: InnType) -> str:
         return inn_str_part + str(n1_check_digit) + str(n2_check_digit)
 
 
-# TODO: покрыть тестами
-def validate():
-    pass
+def validate(inn: str) -> bool:
+    if len(inn) != 10 and len(inn) != 12:
+        return False
+
+    inn_type = InnType.ORGANIZATION if len(inn) == 10 else InnType.INDIVIDUAL
+
+    if inn_type == InnType.ORGANIZATION:
+        n1_check_digit = __calc_organization_check_digit(inn[0:9], ORG_INN_N1_CF)
+        return inn[-1] == str(n1_check_digit)
+    if inn_type == InnType.INDIVIDUAL:
+        n1_check_digit = __calc_organization_check_digit(inn[0:10], IND_INN_N1_CF)
+        n2_check_digit = __calc_organization_check_digit(inn[0:11], IND_INN_N2_CF)
+        return inn[-1] == str(n2_check_digit) and inn[-2] == str(n1_check_digit)
 
 
 def __calc_organization_check_digit(inn_str: str, table: Tuple[int, ...]) -> int:
@@ -48,13 +57,6 @@ def __calc_organization_check_digit(inn_str: str, table: Tuple[int, ...]) -> int
     return 0 if remainder == 10 else remainder
 
 
-# TODO: покрыть тестами
 def __randomize_code(length: int) -> str:
     r_number = random.randint(1, 10 ** length - 1)
     return add_code_zero_prefix(str(r_number), length)
-
-
-# a = generate(inn_type=InnType.ORGANIZATION)
-b = generate(inn_type=InnType.INDIVIDUAL)
-
-print()

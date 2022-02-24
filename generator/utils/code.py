@@ -1,4 +1,3 @@
-# TODO: покрыть тестами
 def add_code_zero_prefix(code: str, target_len: int):
     result_code = code
     for _ in range(1, target_len - len(str(code)) + 1):
