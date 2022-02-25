@@ -3,7 +3,7 @@ import math
 from enum import Enum
 from typing import Tuple, List
 
-from generator.utils.code import add_code_zero_prefix
+from app.internal.utils.code import add_code_zero_prefix
 
 ORG_INN_N1_CF = (2, 4, 10, 3, 5, 9, 4, 6, 8)
 IND_INN_N1_CF = (7,) + ORG_INN_N1_CF

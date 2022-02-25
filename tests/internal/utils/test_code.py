@@ -1,6 +1,6 @@
 import pytest
 
-from generator.utils.code import add_code_zero_prefix
+from app.internal.utils.code import add_code_zero_prefix
 
 
 def test_code():

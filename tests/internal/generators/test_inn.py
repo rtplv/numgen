@@ -1,6 +1,6 @@
 import pytest
 
-from generator.services.inn import InnType, generate, generate_batch, validate
+from app.internal.generators.inn import InnType, generate, generate_batch, validate
 
 
 @pytest.mark.parametrize("inn_type,inn_len", [
