@@ -1,14 +1,19 @@
+from enum import Enum
 from typing import Optional, List
 
 from pydantic import BaseModel
 
 
-class GeneratorSubType(BaseModel):
+class GeneratorType(str, Enum):
+    INN = "INN"
+
+
+class GenerationSubTypeOption(BaseModel):
     name: str
     label: str
 
 
-class GeneratorType(BaseModel):
-    name: str
+class GenerationTypeOption(BaseModel):
+    name: GeneratorType
     label: str
-    subTypes: Optional[List[GeneratorSubType]]
+    subTypes: Optional[List[GenerationSubTypeOption]]

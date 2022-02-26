@@ -1,17 +1,18 @@
-from app.internal.types.generators import GeneratorType, GeneratorSubType
+from app.internal.generators.inn import InnType
+from app.internal.types.generators import GenerationTypeOption, GenerationSubTypeOption, GeneratorType
 
 # В дальнейшем можно это вынести в базу
 GENERATOR_TYPES = [
-    GeneratorType(
-        name="inn",
+    GenerationTypeOption(
+        name=GeneratorType.INN,
         label="ИНН",
         subTypes=[
-            GeneratorSubType(
-                name="individual",
+            GenerationSubTypeOption(
+                name=InnType.INDIVIDUAL.value,
                 label="Физ.лицо"
             ),
-            GeneratorSubType(
-                name="organization",
+            GenerationSubTypeOption(
+                name=InnType.ORGANIZATION.value,
                 label="Организация"
             )
         ]

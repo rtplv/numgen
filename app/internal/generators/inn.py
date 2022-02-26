@@ -10,7 +10,7 @@ IND_INN_N1_CF = (7,) + ORG_INN_N1_CF
 IND_INN_N2_CF = (3, 7,) + ORG_INN_N1_CF
 
 
-class InnType(Enum):
+class InnType(str, Enum):
     INDIVIDUAL = 'INDIVIDUAL'
     ORGANIZATION = 'ORGANIZATION'
 
