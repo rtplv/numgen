@@ -13,3 +13,8 @@
 .generator .label {
     margin-right: 15px;
 }
+
+.generator .error-message {
+    color: red;
+    margin-top: 20px;
+}

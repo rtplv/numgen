@@ -1,32 +1,69 @@
 import './generator.css'
-import {useState} from "react";
-
-const getTypeOptions = () => {
-    const options = ["ИНН", "СНИЛС"]
-    const optionsEls = [
-        <option key="disabled" disabled>Выберите тип</option>
-    ]
-
-    for (const opt of options) {
-        optionsEls.push(<option key={opt} value={opt}>{opt}</option>)
-    }
-
-    return optionsEls
-}
-
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 export default () => {
     // TODO: заменить
-    const [type, setType] = useState("ИНН")
-    const [count, setCount] = useState(0)
+    const [typeOptions, setTypeOptions] = useState([])
+    const [selectedType, setSelectedType] = useState("INN")
+    const [selectedSubType, setSelectedSubType] = useState("")
+    const [quantity, setQuantity] = useState(1)
+    const [generationResult, setGenerationResult] = useState([])
+    const [errorMessage, setErrorMessage] = useState("")
 
-    const submitGenerateForm = event => {
-        event.preventDefault()
-        // TODO: заменить
-        setType("ИНН")
-        setCount(0)
+    useEffect(() => {
+        getTypeOptions()
+            .then(options => setTypeOptions(options))
+    }, [])
+
+
+    const getTypeOptions = async () => {
+        const { data } = await axios.get("/generate/types")
+        return data
     }
 
+    const getSubTypesOptionEls = () => {
+        const selectedTypeOption = typeOptions.find(o => o.name === selectedType)
+
+        if (selectedTypeOption !== undefined) {
+            return (
+                <div className="col">
+                    <label className="label" htmlFor="subType">
+                        Подтип:
+                    </label>
+                    <select id="subType"
+                            value={selectedSubType}
+                            onChange={e => setSelectedSubType(e.target.value)}>
+                        <option disabled value={""} key={"disabled"}> -- Выберите подтип -- </option>
+                        {selectedTypeOption.subTypes.map(opt => (
+                            <option key={opt.name} value={opt.name}>{opt.label}</option>
+                        ))}
+                    </select>
+                </div>
+            )
+        }
+    }
+
+    const submitGenerateForm = async event => {
+        event.preventDefault()
+
+        if (!selectedType || !selectedSubType || !quantity) {
+            setErrorMessage("Необходимо заполнить все поля")
+            return
+        }
+
+        const { data } = await axios.post("/generate", {
+            "type": selectedType,
+            "sub_type": selectedSubType,
+            "quantity": quantity
+        })
+
+        setGenerationResult(data)
+        setSelectedType("INN")
+        setSelectedSubType("")
+        setQuantity(1)
+        setErrorMessage("")
+    }
 
     return (
         <div className="generator">
@@ -36,20 +73,25 @@ export default () => {
                         Тип:
                     </label>
                     <select id="type"
-                            value={type}
-                            onChange={e => setType(e.target.value)}>
-                        {getTypeOptions()}
+                            value={selectedType}
+                            onChange={e => setSelectedType(e.target.value)}>
+                        <option disabled value={""} key={"disabled"}> -- Выберите тип -- </option>
+                        {typeOptions.map(opt => (
+                            <option key={opt.name} value={opt.name}>{opt.label}</option>
+                        ))}
                     </select>
                 </div>
 
+                {getSubTypesOptionEls()}
+
                 <div className="col">
-                    <label className="label" htmlFor="count">
+                    <label className="label" htmlFor="quantity">
                         Кол-во генерируемых сущностей:
                     </label>
-                    <input className="count"
-                           id="count"
-                           value={count}
-                           onChange={e => setCount(parseInt(e.target.value))}
+                    <input className="quantity"
+                           id="quantity"
+                           value={quantity}
+                           onChange={e => setQuantity(parseInt(e.target.value))}
                     />
                 </div>
 
@@ -57,6 +99,16 @@ export default () => {
                     <button type="submit">Сгенерировать</button>
                 </div>
             </form>
+
+            <div className="error-message">{errorMessage}</div>
+
+            <div className="generator-result">
+                <ul>
+                    {generationResult.map(value => (
+                        <li key={value}>{value}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     )
 }

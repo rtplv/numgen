@@ -16,24 +16,23 @@ router = APIRouter(
 class GenerateBody(BaseModel):
     quantity: int = Field(ge=1, le=100)
     type: GeneratorType
-    subtype: str
+    sub_type: str
 
 
-@router.post("/")
+@router.post("")
 def generate(body: GenerateBody) -> List[str]:
     if body.type == GeneratorType.INN:
         try:
-            subtype = InnType(body.subtype)
+            subtype = InnType(body.sub_type)
         except ValueError:
             raise HTTPException(
                 status_code=403,
-                detail=f"subtype {body.subtype} is invalid. Must be in: {[t.value for t in InnType]}"
+                detail=f"subtype {body.sub_type} is invalid. Must be in: {[t.value for t in InnType]}"
             )
 
         return generate_batch(subtype, body.quantity)
 
     return []
-
 
 @router.get("/types")
 def get_types() -> List[GenerationTypeOption]:
