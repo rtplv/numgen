@@ -6,19 +6,25 @@ from app.internal.utils.code import add_code_zero_prefix
 def generate() -> str:
     num_parts = [__generate_part() for i in range(3)]
 
-    # Wiki: Проверка контрольного числа Страхового номера проводится только для номеров больше номера 001-001-998
-    if num_parts[0] == 1 and num_parts[1] == 1 and num_parts[3] < 999:
+    if __without_check_digit(num_parts):
         return __concat_num_parts(num_parts)
 
-    return f"{__concat_num_parts(num_parts)} {__get_check_digit(num_parts)}"
+    return f'{__concat_num_parts(num_parts)} {__get_check_digit(num_parts)}'
 
 
 def generate_batch(quantity: int) -> List[str]:
     return [generate() for _ in range(0, quantity)]
 
 
-def validate(inn: str) -> bool:
-    pass
+def validate(snils: str) -> bool:
+    num_parts = list(map(lambda s: int(s), snils.split(' ')))
+
+    if __without_check_digit(num_parts):
+        return True
+
+    check_digit = str(num_parts.pop(-1))
+
+    return __get_check_digit(num_parts) == check_digit
 
 
 def __generate_part() -> int:
@@ -45,10 +51,12 @@ def __calc_check_digit_from_sum(multiply_sum: int):
     if multiply_sum < 100:
         return str(multiply_sum)
     if multiply_sum == 100 or multiply_sum == 101:
-        return "00"
+        return '00'
     if multiply_sum > 101:
         remainder = multiply_sum % 101
         return __calc_check_digit_from_sum(remainder)
 
 
-a = generate()
+# Wiki: Проверка контрольного числа Страхового номера проводится только для номеров больше номера 001-001-998
+def __without_check_digit(num_parts: List[int]) -> bool:
+    return num_parts[0] == 1 and num_parts[1] == 1 and num_parts[3] < 999
